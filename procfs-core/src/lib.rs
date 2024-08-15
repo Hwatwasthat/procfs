@@ -390,6 +390,9 @@ pub use sys::kernel::Version as KernelVersion;
 mod sysvipc_shm;
 pub use sysvipc_shm::*;
 
+mod tty;
+pub use tty::*;
+
 mod uptime;
 pub use uptime::*;
 
