@@ -498,6 +498,10 @@ impl Current for Uptime {
     const PATH: &'static str = "/proc/uptime";
 }
 
+impl Current for TtyDrivers {
+    const PATH: &'static str = "/proc/tty/drivers";
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

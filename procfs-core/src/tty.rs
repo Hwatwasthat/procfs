@@ -2,7 +2,7 @@ use std::{collections::HashMap, ops::RangeInclusive};
 
 use crate::{expect, from_str, FromBufRead};
 
-pub struct Driver {
+pub struct TttyDriver {
     pub name: String,
     pub node_name: String,
     pub major_number: isize,
@@ -10,11 +10,11 @@ pub struct Driver {
     pub driver_type: String,
 }
 
-pub struct Drivers {
-    pub drivers: HashMap<String, Driver>,
+pub struct TtyDrivers {
+    pub drivers: HashMap<String, TttyDriver>,
 }
 
-impl FromBufRead for Drivers {
+impl FromBufRead for TtyDrivers {
     fn from_buf_read<R: std::io::BufRead>(r: R) -> crate::ProcResult<Self> {
         let mut drivers = HashMap::new();
         for line in r.lines() {
@@ -23,11 +23,11 @@ impl FromBufRead for Drivers {
             let name = driver.name.clone();
             drivers.insert(name, driver);
         }
-        Ok(Drivers { drivers })
+        Ok(TtyDrivers { drivers })
     }
 }
 
-fn parse_line(line: &str) -> crate::ProcResult<Driver> {
+fn parse_line(line: &str) -> crate::ProcResult<TttyDriver> {
     let mut split = line.split_whitespace();
     let name = expect!(split.next()).to_string();
     let node_name = expect!(split.next()).to_string();
@@ -44,7 +44,7 @@ fn parse_line(line: &str) -> crate::ProcResult<Driver> {
         }
     };
     let driver_type = expect!(split.next()).to_string();
-    Ok(Driver { name, node_name, major_number, minor_numbers, driver_type })
+    Ok(TttyDriver { name, node_name, major_number, minor_numbers, driver_type })
 }
 
 #[cfg(test)]
@@ -74,7 +74,7 @@ pty_slave            /dev/pts      136 0-1048575 pty:slave
 pty_master           /dev/ptm      128 0-1048575 pty:master
 unknown              /dev/tty        4 1-63 console
 ";
-        let drivers = super::Drivers::from_buf_read(file.as_bytes()).expect("Unable to parse driver file string");
+        let drivers = super::TtyDrivers::from_buf_read(file.as_bytes()).expect("Unable to parse driver file string");
         assert_eq!(drivers.drivers.len(), 9);
         // Test one of the more complicated ones
         let pty_slave_driver = drivers.drivers.get("pty_slave").expect("There should be a matching driver");
