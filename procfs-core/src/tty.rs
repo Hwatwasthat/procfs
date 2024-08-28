@@ -1,6 +1,6 @@
 use std::{collections::HashMap, ops::RangeInclusive};
 
-use crate::{expect, from_str, FromBufRead, ProcError, ProcResult};
+use crate::{expect, from_str, FromBufRead, ProcResult};
 
 pub struct TttyDriver {
     pub name: String,
@@ -46,7 +46,7 @@ impl FromBufRead for TtyDrivers {
     fn from_buf_read<R: std::io::BufRead>(r: R) -> crate::ProcResult<Self> {
         let mut drivers = HashMap::new();
         for line in r.lines() {
-            let line = line.map_err(|e| crate::ProcError::Other(e.to_string()))?;
+            let line = line?;
             let driver = TttyDriver::parse_line(&line)?;
             let name = driver.name.clone();
             drivers.insert(name, driver);
@@ -78,7 +78,7 @@ impl FromBufRead for LineDisciplines {
     fn from_buf_read<R: std::io::BufRead>(r: R) -> crate::ProcResult<Self> {
         let mut disciplines = Vec::new();
         for line in r.lines() {
-            let line = line.map_err(|e| ProcError::Other(e.to_string()))?;
+            let line = line?;
             let discipline = LineDiscipline::parse_line(&line)?;
             disciplines.push(discipline);
         }
@@ -86,11 +86,44 @@ impl FromBufRead for LineDisciplines {
     }
 }
 
+pub struct TtyDriverDetails {
+    /// This varies gretly between implementations, so a hashmap is used to preserve all information
+    pub details: Vec<(usize, HashMap<String, String>)>,
+}
+
+impl TtyDriverDetails {
+    fn parse_line(line: &str) -> ProcResult<(usize, HashMap<String, String>)> {
+        let mut line = line.split_whitespace();
+        let id = expect!(line.next());
+        let id = from_str!(usize, expect!(id.strip_suffix(":")));
+        let mut details = HashMap::new();
+        for pair in line {
+            let (key, value) = expect!(pair.split_once(':'));
+            details.insert(key.to_string(), value.to_string());
+        }
+        Ok((id, details))
+    }
+}
+
+impl FromBufRead for TtyDriverDetails {
+    fn from_buf_read<R: std::io::BufRead>(r: R) -> ProcResult<Self> {
+        // First line is a header, so skip that
+        let lines = r.lines().skip(1);
+        let mut details = vec![];
+        for line in lines {
+            let line = line?;
+            let detail = TtyDriverDetails::parse_line(&line)?;
+            details.push(detail);
+        }
+        Ok(Self { details })
+    }
+}
+
 #[cfg(test)]
 mod test {
     use crate::FromBufRead;
 
-    use super::{LineDiscipline, LineDisciplines, TttyDriver, TtyDrivers};
+    use super::{LineDiscipline, LineDisciplines, TttyDriver, TtyDriverDetails, TtyDrivers};
 
     #[test]
     fn correct_line_tty() {
@@ -140,8 +173,8 @@ unknown              /dev/tty        4 1-63 console
     fn correct_ldiscs_file() {
         let file_string = "n_tty       0
 n_null     27";
-        let ldiscs =
-            LineDisciplines::from_buf_read(file_string.as_bytes()).expect("Unable to parse line discipline file string");
+        let ldiscs = LineDisciplines::from_buf_read(file_string.as_bytes())
+            .expect("Unable to parse line discipline file string");
         assert_eq!(ldiscs.disciplines.len(), 2);
         let n_tty = ldiscs
             .disciplines
@@ -155,5 +188,20 @@ n_null     27";
         assert_eq!(n_tty.no, 0);
         assert_eq!(&n_null.name, "n_null");
         assert_eq!(n_null.no, 27);
+    }
+
+    #[test]
+    fn correct_details_line() {
+        let line = "21: uart:unknown port:00000000 irq:0";
+        let (id, details) = TtyDriverDetails::parse_line(line).expect("Could not parse line");
+        assert_eq!(id, 21);
+        assert_eq!(
+            &"unknown",
+            details.get("uart").expect("No corresponding entry for uart")
+        );
+        assert_eq!(
+            &"00000000",
+            &details.get("port").expect("No corresponding entry for port")
+        );
     }
 }
