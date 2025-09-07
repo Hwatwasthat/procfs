@@ -1043,7 +1043,7 @@ impl FromBufRead for VmStat {
 
 /// Details about a loaded kernel module
 ///
-/// For an example, see the [lsmod.rs](https://github.com/eminence/procfs/tree/master/examples)
+/// For an example, see the [lsmod.rs](https://github.com/eminence/procfs/tree/master/procfs/examples)
 /// example in the source repo.
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
