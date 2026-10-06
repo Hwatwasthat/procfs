@@ -51,7 +51,7 @@ Under the following license:
 
 Copyright 2003 Binh Nguyen
 
-Under the GPL Free Documenation License. See: http://tldp.org/LDP/Linux-Filesystem-Hierarchy/html/ln14.html
+Under the GPL Free Documentation License. See: http://tldp.org/LDP/Linux-Filesystem-Hierarchy/html/ln14.html
 
 
 ==================================

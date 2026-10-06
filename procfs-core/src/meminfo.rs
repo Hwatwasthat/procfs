@@ -3,12 +3,12 @@ use super::{expect, from_str, ProcResult};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, io};
 
-fn convert_to_kibibytes(num: u64, unit: &str) -> ProcResult<u64> {
+fn convert_to_bytes(num: u64, unit: &str) -> ProcResult<u64> {
     match unit {
         "B" => Ok(num),
-        "KiB" | "kiB" | "kB" | "KB" => Ok(num * 1024),
-        "MiB" | "miB" | "MB" | "mB" => Ok(num * 1024 * 1024),
-        "GiB" | "giB" | "GB" | "gB" => Ok(num * 1024 * 1024 * 1024),
+        "KiB" | "kiB" | "kB" | "KB" => Ok(num.saturating_mul(1024)),
+        "MiB" | "miB" | "MB" | "mB" => Ok(num.saturating_mul(1024 * 1024)),
+        "GiB" | "giB" | "GB" | "gB" => Ok(num.saturating_mul(1024 * 1024 * 1024)),
         unknown => Err(build_internal_error!(format!("Unknown unit type {}", unknown))),
     }
 }
@@ -155,7 +155,7 @@ pub struct Meminfo {
     ///
     /// (since Linux 2.6.18)
     pub page_tables: Option<u64>,
-    /// Amount of memory allocated for seconary page tables. This currently includes KVM mmu
+    /// Amount of memory allocated for secondary page tables. This currently includes KVM mmu
     /// allocations on x86 and arm64.
     ///
     /// (since Linux 6.1)
@@ -273,7 +273,7 @@ pub struct Meminfo {
     /// needs documentation
     pub hugetlb: Option<u64>,
 
-    /// Memory allocated to the per-cpu alloctor used to back per-cpu allocations.
+    /// Memory allocated to the per-cpu allocator used to back per-cpu allocations.
     ///
     /// This stat excludes the cost of metadata.
     pub per_cpu: Option<u64>,
@@ -285,7 +285,7 @@ pub struct Meminfo {
 
     /// Undocumented field
     ///
-    /// (CONFIG_TRANSPARENT_HUGEPAGE is requried.  Since Linux 5.4)
+    /// (CONFIG_TRANSPARENT_HUGEPAGE is required.  Since Linux 5.4)
     pub file_pmd_mapped: Option<u64>,
 
     /// Undocumented field
@@ -321,7 +321,7 @@ impl super::FromBufRead for Meminfo {
             let value = from_str!(u64, value);
 
             let value = if let Some(unit) = unit {
-                convert_to_kibibytes(value, unit)?
+                convert_to_bytes(value, unit)?
             } else {
                 value
             };

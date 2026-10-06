@@ -8,7 +8,7 @@ use std::io::BufRead;
 /// To fully understand these fields, please see the [iostats.txt](https://www.kernel.org/doc/Documentation/iostats.txt)
 /// kernel documentation.
 ///
-/// For an example, see the [diskstats.rs](https://github.com/eminence/procfs/tree/master/examples)
+/// For an example, see the [diskstats.rs](https://github.com/eminence/procfs/tree/master/procfs/examples)
 /// example in the source repo.
 // Doc reference: https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats
 // Doc reference: https://www.kernel.org/doc/Documentation/iostats.txt

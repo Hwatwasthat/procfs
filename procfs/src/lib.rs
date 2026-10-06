@@ -1,6 +1,4 @@
 #![allow(unknown_lints)]
-// The suggested fix with `str::parse` removes support for Rust 1.48
-#![allow(clippy::from_str_radix_10)]
 #![deny(rustdoc::broken_intra_doc_links, rustdoc::invalid_html_tags)]
 //! This crate provides to an interface into the linux `procfs` filesystem, usually mounted at
 //! `/proc`.
@@ -24,7 +22,7 @@
 //! sometimes the style of writing is not very "rusty", or may do things like reference related files
 //! (instead of referencing related structs).  Contributions to improve this are welcome.
 //!
-//! # Panicing
+//! # Panicking
 //!
 //! While previous versions of the library could panic, this current version aims to be panic-free
 //! in a many situations as possible.  Whenever the procfs crate encounters a bug in its own
@@ -51,6 +49,7 @@ pub use procfs_core::*;
 use bitflags::bitflags;
 
 use rustix::fd::AsFd;
+use rustix::fs::{Mode, OFlags};
 use std::collections::HashMap;
 use std::fmt;
 use std::fs::File;
@@ -219,22 +218,25 @@ impl FileWrapper {
             path: p.to_owned(),
         })
     }
+    fn open_at_flags<P, Q, Fd: AsFd>(root: P, dirfd: Fd, path: Q, flags: OFlags) -> Result<FileWrapper, io::Error>
+    where
+        P: AsRef<Path>,
+        Q: AsRef<Path>,
+    {
+        let p = root.as_ref().join(path.as_ref());
+        let fd = wrap_io_error!(p, rustix::fs::openat(dirfd, path.as_ref(), flags, Mode::empty()))?;
+        Ok(FileWrapper {
+            inner: File::from(fd),
+            path: p,
+        })
+    }
+
     fn open_at<P, Q, Fd: AsFd>(root: P, dirfd: Fd, path: Q) -> Result<FileWrapper, io::Error>
     where
         P: AsRef<Path>,
         Q: AsRef<Path>,
     {
-        use rustix::fs::{Mode, OFlags};
-
-        let p = root.as_ref().join(path.as_ref());
-        let fd = wrap_io_error!(
-            p,
-            rustix::fs::openat(dirfd, path.as_ref(), OFlags::RDONLY | OFlags::CLOEXEC, Mode::empty())
-        )?;
-        Ok(FileWrapper {
-            inner: File::from(fd),
-            path: p,
-        })
+        Self::open_at_flags(root, dirfd, path, OFlags::RDONLY | OFlags::CLOEXEC)
     }
 
     /// Returns the inner file
@@ -432,6 +434,10 @@ pub fn cmdline() -> ProcResult<Vec<String>> {
 
 impl Current for CpuInfo {
     const PATH: &'static str = "/proc/cpuinfo";
+}
+
+impl Current for Devices {
+    const PATH: &'static str = "/proc/devices";
 }
 
 impl Current for DiskStats {
@@ -690,6 +696,12 @@ mod tests {
     }
 
     #[test]
+    fn test_devices() {
+        let devices = Devices::current().unwrap();
+        println!("{:#?}", devices);
+    }
+
+    #[test]
     fn test_diskstats() {
         for disk in super::diskstats().unwrap() {
             println!("{:?}", disk);
@@ -851,7 +863,7 @@ mod tests {
         {
             assert!(meminfo.anon_hugepages.is_some());
         } else {
-            // SOme distributions may backport this option into older kernels
+            // Some distributions may backport this option into older kernels
             // assert!(meminfo.anon_hugepages.is_none());
         }
 

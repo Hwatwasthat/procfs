@@ -112,7 +112,7 @@ impl From<&str> for LockKind {
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
 /// Details about an individual file lock
 ///
-/// For an example, see the [lslocks.rs](https://github.com/eminence/procfs/tree/master/examples)
+/// For an example, see the [lslocks.rs](https://github.com/eminence/procfs/tree/master/procfs/examples)
 /// example in the source repo.
 pub struct Lock {
     /// The type of lock

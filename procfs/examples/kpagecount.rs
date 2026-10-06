@@ -34,7 +34,7 @@ fn main() {
         println!("Found RAM here: 0x{:x}-0x{:x}", map.address.0, map.address.1);
 
         // Physical memory is divided into pages of `page_size` bytes (usually 4kiB)
-        // Each page is referenced by its Page Fram Number (PFN)
+        // Each page is referenced by its Page Frame Number (PFN)
         let (start_pfn, end_pfn) = map.get_range().get();
 
         let page_references = kpagecount

@@ -4,7 +4,7 @@ These examples can be run by running `cargo run --example example_name`
 
 ## dump.rs
 
-Prints out details about the current process (the dumper itself), or a process specifed by PID
+Prints out details about the current process (the dumper itself), or a process specified by PID
 
 ## interface_stats.rs
 
@@ -102,7 +102,7 @@ and disks used for ZFS will not be shown either).
 
 ## lslocks.rs
 
-Shows current file locks in a format that is similiar to the `lslocks` utility.
+Shows current file locks in a format that is similar to the `lslocks` utility.
 
 ## mountinfo.rs
 
@@ -181,7 +181,6 @@ Lots of references to this locations: addr=0x81ba3000, pfn=531363, refs=128
 Found RAM here: 0x100000000-0x11fffffff
 Lots of references to this locations: addr=0x1b575000, pfn=111989, refs=134
 ```
-
 
 ## Crypto
 

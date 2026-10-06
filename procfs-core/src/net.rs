@@ -495,7 +495,7 @@ impl super::FromBufRead for ArpEntries {
 
 /// General statistics for a network interface/device
 ///
-/// For an example, see the [interface_stats.rs](https://github.com/eminence/procfs/tree/master/examples)
+/// For an example, see the [interface_stats.rs](https://github.com/eminence/procfs/tree/master/procfs/examples)
 /// example in the source repo.
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]

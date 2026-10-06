@@ -43,7 +43,7 @@ fn main() {
                 local_address, remote_addr, state, entry.inode, stat.pid, stat.comm
             );
         } else {
-            // We might not always be able to find the process assocated with this socket
+            // We might not always be able to find the process associated with this socket
             println!(
                 "{:<26} {:<26} {:<15} {:<12} -",
                 local_address, remote_addr, state, entry.inode

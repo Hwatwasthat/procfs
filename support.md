@@ -49,10 +49,11 @@ This is an approximate list of all the files under the `/proc` mount, and an ind
   * [x] `/proc/[pid]/stat`
   * [x] `/proc/[pid]/statm`
   * [x] `/proc/[pid]/status`
-  * [ ] `/proc/[pid]/syscall`
+  * [x] `/proc/[pid]/syscall`
   * [ ] `/proc/[pid]/task`
     * [x] `/proc/[pid]/task/[tid]/stat`
     * [x] `/proc/[pid]/task/[tid]/status`
+    * [x] `/proc/[pid]/task/[tid]/syscall`
     * [x] `/proc/[pid]/task/[tid]/io`
     * [x] `/proc/[pid]/task/[tid]/children`
   * [ ] `/proc/[pid]/timers`
@@ -71,7 +72,7 @@ This is an approximate list of all the files under the `/proc` mount, and an ind
 * [ ] `/proc/config.gz`
 * [ ] `/proc/crypto`
 * [ ] `/proc/cpuinfo`
-* [ ] `/proc/devices`
+* [x] `/proc/devices`
 * [x] `/proc/diskstats`
 * [ ] `/proc/dma`
 * [ ] `/proc/driver`
@@ -104,15 +105,23 @@ This is an approximate list of all the files under the `/proc` mount, and an ind
   * [x] `/proc/net/arp`
   * [x] `/proc/net/dev`
   * [ ] `/proc/net/dev_mcast`
+  * [ ] `/proc/net/icmp`
   * [ ] `/proc/net/igmp`
   * [ ] `/proc/net/ipv6_route`
+  * [ ] `/proc/net/netlink`
+  * [ ] `/proc/net/packet`
   * [ ] `/proc/net/rarp`
   * [ ] `/proc/net/raw`
+  * [ ] `/proc/net/raw6`
   * [x] `/proc/net/route`
   * [x] `/proc/net/snmp`
   * [x] `/proc/net/snmp6`
   * [x] `/proc/net/tcp`
+  * [x] `/proc/net/tcp6`
   * [x] `/proc/net/udp`
+  * [x] `/proc/net/udp6`
+  * [ ] `/proc/net/udplite`
+  * [ ] `/proc/net/udplite6`
   * [x] `/proc/net/unix`
   * [ ] `/proc/net/netfilter/nfnetlink_queue`
 * [x] `/proc/partitions`

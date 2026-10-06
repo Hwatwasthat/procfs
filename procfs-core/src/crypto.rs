@@ -122,9 +122,9 @@ pub enum Type {
     Skcipher(Skcipher),
     /// Single Block Cipher
     Cipher(Cipher),
-    /// Syncronous Hash
+    /// Synchronous Hash
     Shash(Shash),
-    /// Asyncronous Hash
+    /// Asynchronous Hash
     Ahash(Ahash),
     /// Authenticated Encryption with Associated Data
     Aead(Aead),

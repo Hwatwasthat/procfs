@@ -123,7 +123,7 @@ impl super::Current for InterfaceDeviceStatus {
 ///
 /// This data is from the `/proc/net/dev` file.
 ///
-/// For an example, see the [interface_stats.rs](https://github.com/eminence/procfs/tree/master/examples)
+/// For an example, see the [interface_stats.rs](https://github.com/eminence/procfs/tree/master/procfs/examples)
 /// example in the source repo.
 ///
 /// Note that this returns information from the networking namespace of the
